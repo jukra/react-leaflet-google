@@ -1443,7 +1443,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._initMutantContainer();
 
 	    // Will be called after callback passed in initialize function
-	    GoogleMapsLoader.load(function (google) {
+	    if (!google) {
+	      GoogleMapsLoader.load(function (google) {
+	        this._map = map;
+
+	        this._initMutant();
+
+	        map.on('viewreset', this._reset, this);
+	        map.on('move', this._update, this);
+	        map.on('zoomend', this._handleZoomAnim, this);
+	        map.on('resize', this._resize, this);
+
+	        //20px instead of 1em to avoid a slight overlap with google's attribution
+	        map._controlCorners.bottomright.style.marginBottom = '20px';
+
+	        this._reset();
+	        this._update();
+	      }.bind(this));
+	    } else {
 	      this._map = map;
 
 	      this._initMutant();
@@ -1458,7 +1475,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      this._reset();
 	      this._update();
-	    }.bind(this));
+	    }
 	  },
 
 	  onRemove: function onRemove(map) {
