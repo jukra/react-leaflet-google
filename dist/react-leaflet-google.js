@@ -1401,8 +1401,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    self._type = options.maptype || 'SATELLITE';
 
-	    GoogleMapsLoader.load(function (_google) {
-	      google = _google;
+	    // Check if we have already included Google js library
+	    if (!google) {
+	      GoogleMapsLoader.load(function (_google) {
+	        google = _google;
+	        self._ready = true;
+	        //self._initMapObject();
+	        // self.
+	        self._initMutant();
+	        self._update();
+
+	        if (options.onAfterLoad) {
+	          options.onAfterLoad(google);
+	        }
+
+	        //this._ready = google.maps.Map !== undefined;
+	        //if (!this._ready) L.Google.asyncWait.push(this);
+	      });
+	    } else {
 	      self._ready = true;
 	      //self._initMapObject();
 	      // self.
@@ -1412,10 +1428,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (options.onAfterLoad) {
 	        options.onAfterLoad(google);
 	      }
-
-	      //this._ready = google.maps.Map !== undefined;
-	      //if (!this._ready) L.Google.asyncWait.push(this);
-	    });
+	    }
 
 	    // Couple data structures indexed by tile key
 	    this._tileCallbacks = {}; // Callbacks for promises for tiles that are expected
